@@ -3,15 +3,15 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>IC Advanced Basics - LOGIC Answer</title>
+<title>Monster Words</title>
 
 <style>
 	body {margin:0px; padding:0px; background-color:#ccc; overflow:hidden;}
-	#myCanvas {position:absolute; left:0px; top:0px; background-color:#ccc;}
+	#myCanvas {position:absolute; left:0px; top:0px; background-color:#E0FFFF;}
 </style>
 
-<script src="js/createjs-2015.11.26.min.js"></script>
-<script src="js/im.js"></script>
+<script src="libraries/createjs-2015.11.26.min.js"></script>
+<script src="libraries/im.js"></script>
 
 
 <script>
@@ -64,16 +64,20 @@ Make a puzzle that has a set of circles all which animate a different distance f
 	var count = startCount;
 
 	// I added restart functionality that needs to reset the answers so make a function we can call for later
-	var answer, mix, guesses;
+	// var answer, mix, guesses;
 
-	var words = ["Floccinaucinihilipilification", "Finaucinihilification", "Floinaucinilification", "Faucinipilification"];
+	var words1 = ["Floccinaucinihilipilification", "Finaucinihilification", "Floinaucinilification", "Faucinipilification"];
+	var answers = ["The action or habit of estimating something as worthless."];
 
-	for(var i = 0; i<words.length; i++){
-		console.log(words[i]);
-
+	for(var i = 0; i<words1.length; i++){
+		console.log(words1[i]);
 	}
 
-	im.shuffle(words);
+	for(var i = 0; i<answers.length; i++){
+		console.log(answers[i]);
+	}
+
+	im.shuffle(words1);
 
 	var header = new createjs.Container();
 	stage.addChild(header);
@@ -92,6 +96,16 @@ Make a puzzle that has a set of circles all which animate a different distance f
 	header.addChild(headerBack);
 	header.x = stageW*0.16;
 	header.y = stageH*0.08;
+	header.words = answers[0];
+
+	var answer = new createjs.Text(header.words, (stageW*.7)*0.06+"10px arial", "white");
+	answer.textAlign = "center";
+	answer.textBaseline = "middle";
+	answer.lineWidth = stageW*.7;
+	header.addChild(answer);
+	answer.x = stageW*0.35;
+	answer.y = stageH*0.15;
+	// answer.y = header.height/2;
 
 	}
 
@@ -118,25 +132,48 @@ Make a puzzle that has a set of circles all which animate a different distance f
 		options.removeAllChildren(); // for handling resize
 		for (var i=0; i<total; i++) {
 			option = new createjs.Container();
+			option.mouseChildren = false;
 			backing = new createjs.Shape();
 			backing.graphics.f(ballColor).dr(0,0,optionW, optionH);
 			option.addChild(backing);
 			options.addChild(option);
 			option.x = ((optionW+spacing)*1.05)* (i%cols);
 			option.y = ((optionH+spacing)*1.2)* Math.floor(i/cols);
-			option.words = words[i];
+			option.words = words1[i];
 
-			var letter = new createjs.Text(option.words, optionW*0.07+"10px arial", "white");
+			var letter = new createjs.Text(option.words, optionW*0.08+"10px arial", "white");
 			letter.textAlign = "center";
 			letter.textBaseline = "middle";
 			option.addChild(letter);
 			letter.x = optionW/2;
 			letter.y = optionH/2;
+
+			option.on("mousedown", function(e){
+				// if (letter.text == options.words) letter.text=""; letter.text += e.target.letter;
+				// console.log(e.target.words);
+				if(e.target.words === "Floccinaucinihilipilification")
+				{
+					console.log("you got it!");
+					alert("you got it!");
+				}
+				else{
+					console.log("Wrong!");
+				}
+				// if (answer.text == "SWIPE TO SCORE") answer.text=""; answer.text += e.target.letter;
+				// console.log(e.target.parent.words);
+				stage.update();
+			});
 		}
 		options.x = stageW/2 - optionW;
 		options.y = stageH*0.6;
 	}
 	makeOptions();
+
+
+
+	// options.on("click", function(){
+	// 	console.log("answer");
+	// });
 
 	// var animateCheck = false; // optional: animate one at a time (helps performance on mobile)
 	// balls.on("click", function(e) {
