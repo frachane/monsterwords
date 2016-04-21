@@ -1,0 +1,274 @@
+
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>IC Advanced Basics - LOGIC Answer</title>
+
+<style>
+	body {margin:0px; padding:0px; background-color:#ccc; overflow:hidden;}
+	#myCanvas {position:absolute; left:0px; top:0px; background-color:#ccc;}
+</style>
+
+<script src="libraries/createjs-2015.11.26.min.js"></script>
+<script src="libraries/im.js"></script>
+
+
+<script>
+
+window.addEventListener("load", function() {
+
+	var stageW;
+	var stageH;
+	var ready = false;
+	var resize;
+	var orientation;
+
+	makeCanvas();
+
+	var stage = new createjs.Stage("myCanvas");
+	stage.enableMouseOver(10);  // leave out if mobile
+	createjs.Touch.enable(stage, true);
+	sizeStage();
+
+	// end template header
+	//------------------------------------------
+
+
+/*
+
+TASK
+
+Make a puzzle that has a set of circles all which animate a different distance from left to right (these are randomly set each time the puzzle is loaded). The goal is to press the circles in order so they animate from the shortest distance to the longest distance.  It is a memory puzzle.
+
+1. Make 7 circles stack on the left side a portrait view mobile app.  [1]
+
+2. Make a text field in the bottom right that will count down from 50 for example each time a circle is pressed. [1]
+
+3. Each time a circle is pressed it animates to the right at a certain distance and animates back to the start.  Imagine that one circle animates the stageW*1/7 and another stageW*2/7, etc. but there should be a margin on either side.  These specific lengths should be randomly assigned as the page is loaded (so they are not in order). [1]
+
+4. Make it so you indicate somehow that the user has solved the puzzle if all the circles are pressed in the right order so that they animate from the shortest to the longest animation.  Make it so you indicate somehow that the user has lost if they do not order correctly before the counter runs out. [1]
+
+5. Make it so the app scales properly to a vertical mobile device.
+
+*/
+
+	var cols = 2;
+	var rows = 2;
+	var total = cols*rows;
+	var height; // set these in make function so resize can set them later too
+	var spacing;
+	var radius;
+	var ballColor = "tomato";
+	var startCount = 10;
+	var count = startCount;
+
+	// I added restart functionality that needs to reset the answers so make a function we can call for later
+	var answer, mix, guesses;
+
+	var words = ["Floccinaucinihilipilification", "Finaucinihilification", "Floinaucinilification", "Faucinipilification"];
+
+	for(var i = 0; i<words.length; i++){
+		console.log(words[i]);
+
+	}
+
+	im.shuffle(words);
+
+	var header = new createjs.Container();
+	stage.addChild(header);
+
+	function makeHeader() {
+
+
+	header.removeAllChildren();
+
+
+
+
+	var headerBack = new createjs.Shape();
+	headerBack.graphics.f("black").dr(0,0,stageW*.7, stageH*.45);
+
+	header.addChild(headerBack);
+	header.x = stageW*0.16;
+	header.y = stageH*0.08;
+
+	}
+
+	makeHeader();
+
+
+
+	// always make a container for a collection
+	// that way you can move it about easily, add a single listener, scale it or remove it all at once, etc.
+	var options = new createjs.Container();
+	// options.cursor = "pointer";
+	stage.addChild(options);
+
+	// put this in a function as we will call it again on resize
+	var option;
+	var backing;
+	function makeOptions() {
+		// scale things to a percentage of the stage
+		height = stageH*.7;
+		spacing = stageH*.006;
+		optionW = stageW*.35;
+		optionH = stageW*.09;
+		// radius = (height-spacing*(num-1))/num/2;
+		options.removeAllChildren(); // for handling resize
+		for (var i=0; i<total; i++) {
+			option = new createjs.Container();
+			backing = new createjs.Shape();
+			backing.graphics.f(ballColor).dr(0,0,optionW, optionH);
+			option.addChild(backing);
+			options.addChild(option);
+			option.x = ((optionW+spacing)*1.05)* (i%cols);
+			option.y = ((optionH+spacing)*1.2)* Math.floor(i/cols);
+			option.words = words[i];
+
+			var letter = new createjs.Text(option.words, optionW*0.07+"10px arial", "white");
+			letter.textAlign = "center";
+			letter.textBaseline = "middle";
+			option.addChild(letter);
+			letter.x = optionW/2;
+			letter.y = optionH/2;
+		}
+		options.x = stageW/2 - optionW;
+		options.y = stageH*0.6;
+	}
+	makeOptions();
+
+	// var animateCheck = false; // optional: animate one at a time (helps performance on mobile)
+	// balls.on("click", function(e) {
+	// 	if (animateCheck) return;
+	// 	balls.cursor = "default";
+	// 	animateCheck = true;
+	// 	ball = e.target;
+	// 	createjs.Tween.get(ball)
+	// 		.to({x:stageW*.7*(ball.num+1)/num}, 500, createjs.Ease.quadOut)
+	// 		.to({x:0}, 500, createjs.Ease.quadIn)
+	// 		.call(function(){
+	// 			createjs.Ticker.off("tick", ticker); // remove the ticker when done
+	// 			// we are done animating so now we can animate another
+	// 			balls.cursor = "pointer";
+	// 			animateCheck = false;
+	// 			// check win and lose
+	// 			// note, we let the circle finish animating before concluding
+	// 			guesses.push(ball.num);
+	// 			guesses.shift(); // keep right number of guess by removing from front
+	// 			if (guesses.toString() == answer.toString()) {
+	// 				makeEnd(true);
+	// 			} else {
+	// 				countDown.text = --count;
+	// 				if (count <= 0) makeEnd(false);
+	// 			}
+	// 		});
+	// 	var ticker = createjs.Ticker.on("tick", stage);
+	// });
+
+	var end; // either holds a green shape for win or a black shape for lose
+	function makeEnd(win) {
+		end = new createjs.Shape();
+		end.graphics.f(win?"green":"black").dr(0,0,stageW,stageH);
+		stage.addChild(end);
+		end.cursor = "pointer";
+		end.on("click", restart);
+		stage.update();
+	}
+
+	function restart() {
+		setAnswers();
+		makeOptions();
+		count = startCount;
+		makeCountDown();
+		makeHeader();
+		stage.removeChild(end);
+		stage.update();
+	};
+
+	// var countDown;
+	// function makeCountDown() {
+	// 	stage.removeChild(countDown);
+	// 	countDown = new createjs.Text(count, stageW*.1 + "px arial", "#333");
+	// 	countDown.textAlign = "right";
+	// 	stage.addChild(countDown);
+	// 	countDown.x = stageW*.9;
+	// 	countDown.y = stageH*.85;
+	// }
+	// makeCountDown();
+
+	resize = function() {
+		// here is where we put code to resize
+
+		makeOptions();
+		makeHeader();
+		// makeCountDown();
+		// would want to scale ending too but not going to bother
+		stage.update();
+	}
+
+	stage.update();
+	ready = true;
+
+	// ----------------------------------------------
+	// start template footer
+	function makeCanvas() {
+		// make a canvas tag and apply attributes for id, width and height
+		var canvas = document.createElement("canvas");
+		canvas.setAttribute("id", "myCanvas");
+
+		// get maximum size for canvas
+		// note: iOS6 does not work from loading icon unless keep canvas within device size
+		// thank you apple for this and many other days of hell
+		largest = Math.max(window.innerWidth, screen.width, window.innerHeight, screen.height);
+		if (!/ip(hone|od|ad)/i.test(navigator.userAgent)) largest *= 3; // handle up to three monitors
+		canvas.setAttribute("width", largest);
+		canvas.setAttribute("height", largest);
+
+		// add our canvas tag
+		document.body.appendChild(canvas);
+
+		// stop the canvas from moving when certain keys are pressed (pgdwn, pgup, arrows, home, end)
+		// and stop scrollwheel from moving page
+		var a = function(e) {
+			if (!e) e = event;
+			if (e.keyCode && (e.keyCode >= 32 && e.keyCode <= 40)) e.preventDefault();
+		}
+		var b = function(e) {
+			if (!e) e = event;
+			e.preventDefault();
+		}
+		var c = b;
+		window.addEventListener("keydown", a);
+		window.addEventListener("mousewheel", b);
+		window.addEventListener("DOMMouseScroll", c);
+		window.addEventListener('resize', function() {
+			sizeStage();
+			if (/ios|android|nexus/i.test(navigator.userAgent)) {
+				setTimeout(function() {
+					sizeStage();
+				}, 500); // to catch delayed screen sizes
+			}
+		});
+	}
+
+	function sizeStage() {
+		// earlier than IE9 does not have innerWidth
+		// inner is better on mobile when zoomed so can't always use client
+		// ternary operator
+		stageW = isNaN(window.innerWidth) ? window.clientWidth : window.innerWidth;
+		stageH = isNaN(window.innerHeight) ? window.clientHeight : window.innerHeight;
+
+		// if wider than high then we have horizontal (or landscape)
+		orientation = (stageW>stageH) ? "horizontal" : "vertical";
+
+		if (stage) stage.setBounds(0,0,stageW,stageH);
+		if (ready) resize();
+	}
+});
+
+</script>
+</head>
+<body>
+</body>
+</html>
