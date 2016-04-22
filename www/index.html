@@ -16,7 +16,9 @@
 
 <script>
 
-window.addEventListener("load", function() {
+window.addEventListener("load", init);
+
+function init() {
 
 	var stageW;
 	var stageH;
@@ -31,27 +33,6 @@ window.addEventListener("load", function() {
 	createjs.Touch.enable(stage, true);
 	sizeStage();
 
-	// end template header
-	//------------------------------------------
-
-
-/*
-
-TASK
-
-Make a puzzle that has a set of circles all which animate a different distance from left to right (these are randomly set each time the puzzle is loaded). The goal is to press the circles in order so they animate from the shortest distance to the longest distance.  It is a memory puzzle.
-
-1. Make 7 circles stack on the left side a portrait view mobile app.  [1]
-
-2. Make a text field in the bottom right that will count down from 50 for example each time a circle is pressed. [1]
-
-3. Each time a circle is pressed it animates to the right at a certain distance and animates back to the start.  Imagine that one circle animates the stageW*1/7 and another stageW*2/7, etc. but there should be a margin on either side.  These specific lengths should be randomly assigned as the page is loaded (so they are not in order). [1]
-
-4. Make it so you indicate somehow that the user has solved the puzzle if all the circles are pressed in the right order so that they animate from the shortest to the longest animation.  Make it so you indicate somehow that the user has lost if they do not order correctly before the counter runs out. [1]
-
-5. Make it so the app scales properly to a vertical mobile device.
-
-*/
 
 	var cols = 2;
 	var rows = 2;
@@ -63,66 +44,68 @@ Make a puzzle that has a set of circles all which animate a different distance f
 	var startCount = 10;
 	var count = startCount;
 
-	// I added restart functionality that needs to reset the answers so make a function we can call for later
-	// var answer, mix, guesses;
+	var words1 = ["FLOCCI­NAUCINI­HILIPIL­IFICATION", "HONORI­FICABILI­TUDINI­TATIBUS", "DIS­PRO­PORTION­ABLE­NESS", "IN­COM­PREHEN­SIB­ILITIES"];
+	var words2 = ["ANTI­DIS­ESTABLISH­MENT­ARIAN­ISM", "DIS­PRO­PORTION­ABLE­NESS", "HONORI­FICABILI­TUDINI­TATIBUS", "PERFIDIOUSNESS"];
 
-	var words1 = ["Floccinaucinihilipilification", "Finaucinihilification", "Floinaucinilification", "Faucinipilification"];
-	var answers = ["The action or habit of estimating something as worthless."];
+	var definitions = ["The action or habit of estimating something as worthless.", "Deliberately faithless; treacherous; deceitful"];
+
+	// console.log(words.words1);
+	// console.log(words.words2);
 
 	for(var i = 0; i<words1.length; i++){
 		console.log(words1[i]);
 	}
 
-	for(var i = 0; i<answers.length; i++){
-		console.log(answers[i]);
+	for(var i = 0; i<words2.length; i++){
+		console.log(words2[i]);
+	}
+
+	for(var i = 0; i<definitions.length; i++){
+		console.log(definitions[i]);
 	}
 
 	im.shuffle(words1);
+	im.shuffle(words2);
 
+	var headerWords;
 	var header = new createjs.Container();
 	stage.addChild(header);
 
-	function makeHeader() {
-
-
-	header.removeAllChildren();
-
-
-
-
-	var headerBack = new createjs.Shape();
-	headerBack.graphics.f("black").dr(0,0,stageW*.7, stageH*.45);
-
-	header.addChild(headerBack);
-	header.x = stageW*0.16;
-	header.y = stageH*0.08;
-	header.words = answers[0];
-
-	var answer = new createjs.Text(header.words, (stageW*.7)*0.06+"10px arial", "white");
-	answer.textAlign = "center";
-	answer.textBaseline = "middle";
-	answer.lineWidth = stageW*.7;
-	header.addChild(answer);
-	answer.x = stageW*0.35;
-	answer.y = stageH*0.15;
-	// answer.y = header.height/2;
-
-	}
-
-	makeHeader();
-
-
-
-	// always make a container for a collection
-	// that way you can move it about easily, add a single listener, scale it or remove it all at once, etc.
 	var options = new createjs.Container();
 	// options.cursor = "pointer";
 	stage.addChild(options);
 
-	// put this in a function as we will call it again on resize
 	var option;
 	var backing;
+
 	function makeOptions() {
+
+		// function makeHeader() {
+
+
+		header.removeAllChildren();
+
+		var headerBack = new createjs.Shape();
+		headerBack.graphics.f("black").dr(0,0,stageW*.7, stageH*.3);
+
+		header.addChild(headerBack);
+		header.x = stageW*0.16;
+		header.y = stageH*0.08;
+		headerWords = definitions[0];
+
+		var answer = new createjs.Text(headerWords, (stageW*.7)*0.06+"10px arial", "white");
+		answer.textAlign = "center";
+		answer.textBaseline = "middle";
+		answer.lineWidth = stageW*.5;
+		header.addChild(answer);
+		answer.x = stageW*0.35;
+		answer.y = (stageH*.25)/2;
+		// answer.y = header.height/2;
+
+
+		// }
+
+		// makeHeader();
 		// scale things to a percentage of the stage
 		height = stageH*.7;
 		spacing = stageH*.006;
@@ -141,106 +124,76 @@ Make a puzzle that has a set of circles all which animate a different distance f
 			option.y = ((optionH+spacing)*1.2)* Math.floor(i/cols);
 			option.words = words1[i];
 
-			var letter = new createjs.Text(option.words, optionW*0.08+"10px arial", "white");
+			var letter = new createjs.Text(option.words, optionW*0.055+"10px arial", "white");
 			letter.textAlign = "center";
 			letter.textBaseline = "middle";
 			option.addChild(letter);
 			letter.x = optionW/2;
 			letter.y = optionH/2;
-
-			option.on("mousedown", function(e){
-				// if (letter.text == options.words) letter.text=""; letter.text += e.target.letter;
-				// console.log(e.target.words);
-				if(e.target.words === "Floccinaucinihilipilification")
-				{
-					console.log("you got it!");
-					alert("you got it!");
-				}
-				else{
-					console.log("Wrong!");
-				}
-				// if (answer.text == "SWIPE TO SCORE") answer.text=""; answer.text += e.target.letter;
-				// console.log(e.target.parent.words);
-				stage.update();
-			});
 		}
 		options.x = stageW/2 - optionW;
 		options.y = stageH*0.6;
+
+		options.on("mousedown", function(e){
+			console.log(e.target.words);
+			// console.log(e.target);
+			// option.removeChild(e.target);
+			if(e.target.words === "FLOCCI­NAUCINI­HILIPIL­IFICATION"){
+				alert("that's it!");
+				options.removeChild(option,letter);
+				// header.removeChild(answer);
+				header.removeAllChildren();
+
+				var headerBack = new createjs.Shape();
+				headerBack.graphics.f("black").dr(0,0,stageW*.7, stageH*.3);
+
+				header.addChild(headerBack);
+				header.x = stageW*0.16;
+				header.y = stageH*0.08;
+				headerWords = definitions[0];
+
+				var answer = new createjs.Text(headerWords, (stageW*.7)*0.06+"10px arial", "white");
+				answer.textAlign = "center";
+				answer.textBaseline = "middle";
+				answer.lineWidth = stageW*.5;
+				header.addChild(answer);
+				answer.x = stageW*0.35;
+				answer.y = (stageH*.25)/2;
+
+				for (var i=0; i<total; i++) {
+
+
+					option = new createjs.Container();
+					option.mouseChildren = false;
+					backing = new createjs.Shape();
+					backing.graphics.f(ballColor).dr(0,0,optionW, optionH);
+					option.addChild(backing);
+					options.addChild(option);
+					option.x = ((optionW+spacing)*1.05)* (i%cols);
+					option.y = ((optionH+spacing)*1.2)* Math.floor(i/cols);
+					option.words = words2[i];
+
+					var letter = new createjs.Text(option.words, optionW*0.055+"10px arial", "white");
+					letter.textAlign = "center";
+					letter.textBaseline = "middle";
+					option.addChild(letter);
+					letter.x = optionW/2;
+					letter.y = optionH/2;
+
+				}
+				// options.addChild(option);
+			}
+
+			stage.update();
+		});
 	}
 	makeOptions();
-
-
-
-	// options.on("click", function(){
-	// 	console.log("answer");
-	// });
-
-	// var animateCheck = false; // optional: animate one at a time (helps performance on mobile)
-	// balls.on("click", function(e) {
-	// 	if (animateCheck) return;
-	// 	balls.cursor = "default";
-	// 	animateCheck = true;
-	// 	ball = e.target;
-	// 	createjs.Tween.get(ball)
-	// 		.to({x:stageW*.7*(ball.num+1)/num}, 500, createjs.Ease.quadOut)
-	// 		.to({x:0}, 500, createjs.Ease.quadIn)
-	// 		.call(function(){
-	// 			createjs.Ticker.off("tick", ticker); // remove the ticker when done
-	// 			// we are done animating so now we can animate another
-	// 			balls.cursor = "pointer";
-	// 			animateCheck = false;
-	// 			// check win and lose
-	// 			// note, we let the circle finish animating before concluding
-	// 			guesses.push(ball.num);
-	// 			guesses.shift(); // keep right number of guess by removing from front
-	// 			if (guesses.toString() == answer.toString()) {
-	// 				makeEnd(true);
-	// 			} else {
-	// 				countDown.text = --count;
-	// 				if (count <= 0) makeEnd(false);
-	// 			}
-	// 		});
-	// 	var ticker = createjs.Ticker.on("tick", stage);
-	// });
-
-	var end; // either holds a green shape for win or a black shape for lose
-	function makeEnd(win) {
-		end = new createjs.Shape();
-		end.graphics.f(win?"green":"black").dr(0,0,stageW,stageH);
-		stage.addChild(end);
-		end.cursor = "pointer";
-		end.on("click", restart);
-		stage.update();
-	}
-
-	function restart() {
-		setAnswers();
-		makeOptions();
-		count = startCount;
-		makeCountDown();
-		makeHeader();
-		stage.removeChild(end);
-		stage.update();
-	};
-
-	// var countDown;
-	// function makeCountDown() {
-	// 	stage.removeChild(countDown);
-	// 	countDown = new createjs.Text(count, stageW*.1 + "px arial", "#333");
-	// 	countDown.textAlign = "right";
-	// 	stage.addChild(countDown);
-	// 	countDown.x = stageW*.9;
-	// 	countDown.y = stageH*.85;
-	// }
-	// makeCountDown();
 
 	resize = function() {
 		// here is where we put code to resize
 
 		makeOptions();
-		makeHeader();
-		// makeCountDown();
-		// would want to scale ending too but not going to bother
+
 		stage.update();
 	}
 
@@ -302,7 +255,7 @@ Make a puzzle that has a set of circles all which animate a different distance f
 		if (stage) stage.setBounds(0,0,stageW,stageH);
 		if (ready) resize();
 	}
-});
+}
 
 </script>
 </head>
