@@ -43,6 +43,7 @@ function init() {
 	var ballColor = "tomato";
 	var startCount = 10;
 	var count = startCount;
+	var counterTotal = 5;
 
 	var words1 = ["FLOCCI­NAUCINI­HILIPIL­IFICATION", "HONORI­FICABILI­TUDINI­TATIBUS", "DIS­PRO­PORTION­ABLE­NESS", "IN­COM­PREHEN­SIB­ILITIES"];
 	var words2 = ["IN­COM­PREHEN­SIB­ILITIES", "DIS­PRO­PORTION­ABLE­NESS", "HONORI­FICABILI­TUDINI­TATIBUS", "PERFIDIOUSNESS"];
@@ -55,15 +56,15 @@ function init() {
 	// console.log(words.words2);
 
 	for(var i = 0; i<words1.length; i++){
-		console.log(words1[i]);
+		// console.log(words1[i]);
 	}
 
 	for(var i = 0; i<words2.length; i++){
-		console.log(words2[i]);
+		// console.log(words2[i]);
 	}
 
 	for(var i = 0; i<definitions.length; i++){
-		console.log(definitions[i]);
+		// console.log(definitions[i]);
 	}
 
 	im.shuffle(words1);
@@ -83,17 +84,19 @@ function init() {
 	var option;
 	var backing;
 
-	clicks.removeAllChildren();
-
-
-	var clickTracker = new createjs.Text(5, "70px arial", "red");
-	clickTracker.textAlign = "center";
-	clickTracker.textBaseline = "middle";
-	clicks.addChild(clickTracker);
-	clickTracker.x = stageW*0.9;
-	clickTracker.y = stageH*0.1;
 
 	function makeOptions() {
+
+		clicks.removeAllChildren();
+
+
+		var clickTracker = new createjs.Text(counterTotal, "70px arial", "red");
+		clickTracker.textAlign = "center";
+		clickTracker.textBaseline = "middle";
+		clicks.addChild(clickTracker);
+		clickTracker.x = stageW*0.9;
+		clickTracker.y = stageH*0.1;
+
 
 
 		header.removeAllChildren();
@@ -117,7 +120,7 @@ function init() {
 		height = stageH*.7;
 		spacing = stageH*.006;
 		optionW = stageW*.7;
-		optionH = stageW*.06;
+		optionH = stageW*.08;
 		// radius = (height-spacing*(num-1))/num/2;
 		options.removeAllChildren(); // for handling resize
 		for (var i=0; i<total; i++) {
@@ -141,8 +144,45 @@ function init() {
 		options.x = stageW/2*0.3;
 		options.y = stageH*0.6;
 
+		// if (clickTracker.text.value < 4){
+		// 	console.log("hey");
+		// }
+
 		options.on("mousedown", function(e){
-			console.log(e.target.words);
+			// console.log(clickTracker.text);
+			if(clickTracker.text < 1){
+				stage.removeAllChildren();
+				var loseText = new createjs.Text("YOU LOSE! TRY AGAIN", "150px arial", "red");
+				loseText.textAlign = "center";
+				loseText.textBaseline = "middle";
+				loseText.lineWidth = stageW*0.7;
+				loseText.x = stageW*0.5;
+				loseText.y = stageH*0.4;
+				stage.addChild(loseText);
+				var restart = new createjs.Container();
+				stage.addChild(restart);
+				restart.x = stageW*0.25;
+				restart.y = stageH*0.6;
+
+				var restartBack = new createjs.Shape();
+				restartBack.graphics.f("black").dr(0,0,stageW*0.5, stageH*0.07);
+				restart.addChild(restartBack);
+
+				var restartText = new createjs.Text("RESTART", "80px arial", "White");
+				restartText.textAlign = "center";
+				restartText.textBaseline = "middle";
+				restartText.lineHeight = 40;
+				restartText.x = stageW*0.25;
+				restartText.y = stageH*0.03;
+				restart.addChild(restartText);
+
+				restart.on("click", function(){
+					location.reload();
+				});
+			}
+
+
+			// console.log(e.target.words);
 			// console.log(e.target);
 			// option.removeChild(e.target);
 			if(e.target.words === "FLOCCI­NAUCINI­HILIPIL­IFICATION"){
@@ -188,7 +228,8 @@ function init() {
 					}
 				options.addChild(option);
 			} else {
-
+				clickTracker.text -= 1;
+				console.log("wrong");
 			}
 			if(e.target.words ==="PERFIDIOUSNESS"){
 					// alert("that's it!");
@@ -231,9 +272,34 @@ function init() {
 				}
 					options.addChild(option);
 				} if(e.target.words ==="ANTI­DIS­ESTABLISH­MENT­ARIAN­ISM"){
-						alert("You did it!");
-						// stage.removeAllChildren();
+					stage.removeAllChildren();
+					var winText = new createjs.Text("YOU WIN!", "150px arial", "red");
+					// letter.textAlign = "center";
+					winText.textBaseline = "middle";
+					winText.lineWidth = stageW*0.7;
+					winText.x = stageW*0.25;
+					winText.y = stageH*0.4;
+					stage.addChild(winText);
+					var restart = new createjs.Container();
+					stage.addChild(restart);
+					restart.x = stageW*0.25;
+					restart.y = stageH*0.6;
+
+					var restartBack = new createjs.Shape();
+					restartBack.graphics.f("black").dr(0,0,stageW*0.5, stageH*0.07);
+					restart.addChild(restartBack);
+
+					var restartText = new createjs.Text("PLAY AGAIN", "80px arial", "White");
+					restartText.textAlign = "center";
+					restartText.textBaseline = "middle";
+					restartText.lineHeight = 40;
+					restartText.x = stageW*0.25;
+					restartText.y = stageH*0.03;
+					restart.addChild(restartText);
+
+					restart.on("click", function(){
 						location.reload();
+					});
 				}
 
 			stage.update();
