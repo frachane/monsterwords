@@ -83,6 +83,16 @@ function init() {
 	var option;
 	var backing;
 
+	clicks.removeAllChildren();
+
+
+	var clickTracker = new createjs.Text(5, "70px arial", "red");
+	clickTracker.textAlign = "center";
+	clickTracker.textBaseline = "middle";
+	clicks.addChild(clickTracker);
+	clickTracker.x = stageW*0.9;
+	clickTracker.y = stageH*0.1;
+
 	function makeOptions() {
 
 
