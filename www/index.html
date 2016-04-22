@@ -34,8 +34,8 @@ function init() {
 	sizeStage();
 
 
-	var cols = 2;
-	var rows = 2;
+	var cols = 1;
+	var rows = 4;
 	var total = cols*rows;
 	var height; // set these in make function so resize can set them later too
 	var spacing;
@@ -85,19 +85,6 @@ function init() {
 
 	function makeOptions() {
 
-		clicks.removeAllChildren();
-
-
-		var clickTracker = new createjs.Text(5, "70px arial", "red");
-		clickTracker.textAlign = "center";
-		clickTracker.textBaseline = "middle";
-		clicks.addChild(clickTracker);
-		clickTracker.x = stageW*0.9;
-		clickTracker.y = stageH*0.1;
-
-
-
-		// function makeHeader() {
 
 		header.removeAllChildren();
 
@@ -106,7 +93,7 @@ function init() {
 
 		header.addChild(headerBack);
 		header.x = stageW*0.16;
-		header.y = stageH*0.015;
+		header.y = stageH*0.001;
 		headerWords = definitions[0];
 
 		var answer = new createjs.Text(headerWords, (stageW*.7)*0.09+"10px arial", "black");
@@ -116,17 +103,11 @@ function init() {
 		header.addChild(answer);
 		answer.x = stageW*0.35;
 		answer.y = (stageH*.4)/2;
-		// answer.y = header.height/2;
 
-
-		// }
-
-		// makeHeader();
-		// scale things to a percentage of the stage
 		height = stageH*.7;
 		spacing = stageH*.006;
-		optionW = stageW*.35;
-		optionH = stageW*.09;
+		optionW = stageW*.7;
+		optionH = stageW*.06;
 		// radius = (height-spacing*(num-1))/num/2;
 		options.removeAllChildren(); // for handling resize
 		for (var i=0; i<total; i++) {
@@ -147,7 +128,7 @@ function init() {
 			letter.x = optionW/2;
 			letter.y = optionH/2;
 		}
-		options.x = stageW/2 - optionW;
+		options.x = stageW/2*0.3;
 		options.y = stageH*0.6;
 
 		options.on("mousedown", function(e){
@@ -240,7 +221,9 @@ function init() {
 				}
 					options.addChild(option);
 				} if(e.target.words ==="ANTI­DIS­ESTABLISH­MENT­ARIAN­ISM"){
-						alert("that's it!");
+						alert("You did it!");
+						// stage.removeAllChildren();
+						location.reload();
 				}
 
 			stage.update();
