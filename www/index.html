@@ -45,9 +45,11 @@ function init() {
 	var count = startCount;
 
 	var words1 = ["FLOCCI­NAUCINI­HILIPIL­IFICATION", "HONORI­FICABILI­TUDINI­TATIBUS", "DIS­PRO­PORTION­ABLE­NESS", "IN­COM­PREHEN­SIB­ILITIES"];
-	var words2 = ["ANTI­DIS­ESTABLISH­MENT­ARIAN­ISM", "DIS­PRO­PORTION­ABLE­NESS", "HONORI­FICABILI­TUDINI­TATIBUS", "PERFIDIOUSNESS"];
+	var words2 = ["IN­COM­PREHEN­SIB­ILITIES", "DIS­PRO­PORTION­ABLE­NESS", "HONORI­FICABILI­TUDINI­TATIBUS", "PERFIDIOUSNESS"];
+	var words3 = ["HONORI­FICABILI­TUDINI­TATIBUS", "DIS­PRO­PORTION­ABLE­NESS", "ANTI­DIS­ESTABLISH­MENT­ARIAN­ISM","IN­COM­PREHEN­SIB­ILITIES"];
 
-	var definitions = ["The action or habit of estimating something as worthless.", "Deliberately faithless; treacherous; deceitful"];
+	var definitions = ["The action or habit of estimating something as worthless.", "Deliberately faithless; treacherous; deceitful",
+"opposition to the withdrawal of state support or recognition from an established church"];
 
 	// console.log(words.words1);
 	// console.log(words.words2);
@@ -75,30 +77,45 @@ function init() {
 	// options.cursor = "pointer";
 	stage.addChild(options);
 
+	var clicks = new createjs.Container();
+	stage.addChild(clicks);
+
 	var option;
 	var backing;
 
 	function makeOptions() {
+
+		clicks.removeAllChildren();
+
+
+		var clickTracker = new createjs.Text(5, "70px arial", "red");
+		clickTracker.textAlign = "center";
+		clickTracker.textBaseline = "middle";
+		clicks.addChild(clickTracker);
+		clickTracker.x = stageW*0.9;
+		clickTracker.y = stageH*0.1;
+
+
 
 		// function makeHeader() {
 
 		header.removeAllChildren();
 
 		var headerBack = new createjs.Shape();
-		headerBack.graphics.f("black").dr(0,0,stageW*.7, stageH*.3);
+		headerBack.graphics.dr(0,0,stageW*.7, stageH*.4);
 
 		header.addChild(headerBack);
 		header.x = stageW*0.16;
-		header.y = stageH*0.08;
+		header.y = stageH*0.015;
 		headerWords = definitions[0];
 
-		var answer = new createjs.Text(headerWords, (stageW*.7)*0.06+"10px arial", "white");
+		var answer = new createjs.Text(headerWords, (stageW*.7)*0.09+"10px arial", "black");
 		answer.textAlign = "center";
 		answer.textBaseline = "middle";
-		answer.lineWidth = stageW*.5;
+		answer.lineWidth = stageW*.7;
 		header.addChild(answer);
 		answer.x = stageW*0.35;
-		answer.y = (stageH*.25)/2;
+		answer.y = (stageH*.4)/2;
 		// answer.y = header.height/2;
 
 
@@ -138,31 +155,72 @@ function init() {
 			// console.log(e.target);
 			// option.removeChild(e.target);
 			if(e.target.words === "FLOCCI­NAUCINI­HILIPIL­IFICATION"){
-				alert("that's it!");
+				// alert("that's it!");
 				// stage.removeAllChildren();
 				options.removeChild(option,letter);
 				header.removeChild(answer);
 				header.removeAllChildren();
 			//
+
+					var headerBack = new createjs.Shape();
+					headerBack.graphics.dr(0,0,stageW*.7, stageH*.4);
+
+					header.addChild(headerBack);
+					header.x = stageW*0.16;
+					header.y = stageH*0.015;
+					headerWords = definitions[1];
+
+					var answer = new createjs.Text(headerWords, (stageW*.7)*0.09+"10px arial", "black");
+					answer.textAlign = "center";
+					answer.textBaseline = "middle";
+					answer.lineWidth = stageW*.7;
+					header.addChild(answer);
+					answer.x = stageW*0.35;
+					answer.y = (stageH*.4)/2;
+					for (var i=0; i<total; i++) {
+						option = new createjs.Container();
+						option.mouseChildren = false;
+						backing = new createjs.Shape();
+						backing.graphics.f(ballColor).dr(0,0,optionW, optionH);
+						option.addChild(backing);
+						options.addChild(option);
+						option.x = ((optionW+spacing)*1.05)* (i%cols);
+						option.y = ((optionH+spacing)*1.2)* Math.floor(i/cols);
+						option.words = words2[i];
+
+						var letter = new createjs.Text(option.words, optionW*0.055+"10px arial", "white");
+						letter.textAlign = "center";
+						letter.textBaseline = "middle";
+						option.addChild(letter);
+						letter.x = optionW/2;
+						letter.y = optionH/2;
+					}
+				options.addChild(option);
+			} else {
+
+			}
+			if(e.target.words ==="PERFIDIOUSNESS"){
+					// alert("that's it!");
+					options.removeChild(option,letter);
+					header.removeChild(answer);
+					header.removeAllChildren();
+				//
 				var headerBack = new createjs.Shape();
-				headerBack.graphics.f("black").dr(0,0,stageW*.7, stageH*.3);
+				headerBack.graphics.dr(0,0,stageW*.7, stageH*.4);
 
 				header.addChild(headerBack);
 				header.x = stageW*0.16;
-				header.y = stageH*0.08;
-				headerWords = definitions[1];
-				//
-				var answer = new createjs.Text(headerWords, (stageW*.7)*0.06+"10px arial", "white");
+				header.y = stageH*0.015;
+				headerWords = definitions[2];
+
+				var answer = new createjs.Text(headerWords, (stageW*.7)*0.09+"10px arial", "black");
 				answer.textAlign = "center";
 				answer.textBaseline = "middle";
-				answer.lineWidth = stageW*.5;
+				answer.lineWidth = stageW*.9;
 				header.addChild(answer);
 				answer.x = stageW*0.35;
-				answer.y = (stageH*.25)/2;
-
+				answer.y = (stageH*.4)/2;
 				for (var i=0; i<total; i++) {
-
-
 					option = new createjs.Container();
 					option.mouseChildren = false;
 					backing = new createjs.Shape();
@@ -171,7 +229,7 @@ function init() {
 					options.addChild(option);
 					option.x = ((optionW+spacing)*1.05)* (i%cols);
 					option.y = ((optionH+spacing)*1.2)* Math.floor(i/cols);
-					option.words = words2[i];
+					option.words = words3[i];
 
 					var letter = new createjs.Text(option.words, optionW*0.055+"10px arial", "white");
 					letter.textAlign = "center";
@@ -179,12 +237,10 @@ function init() {
 					option.addChild(letter);
 					letter.x = optionW/2;
 					letter.y = optionH/2;
-
 				}
-				options.addChild(option);
-					}
-			 else if(e.target.words ==="PERFIDIOUSNESS"){
-					alert("that's it!");
+					options.addChild(option);
+				} if(e.target.words ==="ANTI­DIS­ESTABLISH­MENT­ARIAN­ISM"){
+						alert("that's it!");
 				}
 
 			stage.update();
