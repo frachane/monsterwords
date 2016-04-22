@@ -273,11 +273,11 @@ function init() {
 					options.addChild(option);
 				} if(e.target.words ==="ANTI­DIS­ESTABLISH­MENT­ARIAN­ISM"){
 					stage.removeAllChildren();
-					var winText = new createjs.Text("YOU WIN!", "150px arial", "red");
+					var winText = new createjs.Text("YOU WIN!", "80px arial", "red");
 					// letter.textAlign = "center";
 					winText.textBaseline = "middle";
 					winText.lineWidth = stageW*0.7;
-					winText.x = stageW*0.25;
+					winText.x = stageW*0.4;
 					winText.y = stageH*0.4;
 					stage.addChild(winText);
 					var restart = new createjs.Container();
@@ -289,7 +289,7 @@ function init() {
 					restartBack.graphics.f("black").dr(0,0,stageW*0.5, stageH*0.07);
 					restart.addChild(restartBack);
 
-					var restartText = new createjs.Text("PLAY AGAIN", "80px arial", "White");
+					var restartText = new createjs.Text("PLAY AGAIN", "60px arial", "White");
 					restartText.textAlign = "center";
 					restartText.textBaseline = "middle";
 					restartText.lineHeight = 40;
